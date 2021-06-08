@@ -10,7 +10,7 @@
 
 找到Application选项卡，然后找到cookie为`cmi-user-ticket`的cookie，将Key和Value通过等于号(=)拼装起来拼。运行程序第一步键入该值！
 
-![](images/40D69962-D690-4CE7-BAB2-5524E966A724.png)
+![](images/5DB58EC7-A7AB-4471-9604-D6BD8E718806.png)
 
 #### 2. 选择要实时检测的门诊网址
 
@@ -30,6 +30,6 @@
 
 #### 4. 实时查看门诊预约状态（每30秒查询一次）
 
-![](images/60D988FB-BCAC-47D1-B009-5553D4646A98.png)
+![](images/CBB685EF-CAD3-4D94-9EB7-76B0254BB781.png)
 
 ## 请不要加快查询速度，防止对114服务造成请求压力，维护计算机安全。

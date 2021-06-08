@@ -190,7 +190,7 @@ if __name__ == '__main__':
     with Live(console=console, screen=True, auto_refresh=False) as live:
         while True:
             if normal:
-                time.sleep(5)
+                time.sleep(30)
                 os_data = all_info_of_table(os_list)
 
             live.update(os_data, refresh=True)
