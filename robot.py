@@ -7,8 +7,7 @@ from rich import box
 from rich.live import Live
 import datetime
 from datetime import timedelta
-from rich.layout import Layout
-from rich.panel import Panel
+import dingding
 
 headers = {
     'Content-Type': 'application/json',
@@ -130,11 +129,18 @@ def all_info_of_table(request_os_list: list) -> Table:
     for value in week_of_name:
         table.add_column('[light_sea_green]' + value, justify="center")
 
+    available = []
+
     for data in parsed_data:
 
         week_of_dict = {0: "[red]未知", 1: "[red]未知", 2: "[red]未知", 3: "[red]未知", 4: "[red]未知", 5: "[red]未知",
                         6: "[red]未知"}
 
+        hospital_dict = {"hosName": data["hosName"],
+                         "firstDeptName": data["firstDeptName"],
+                         "secondDeptName": data["secondDeptName"]}
+
+        yuyue_available = []
         for index, value in enumerate(week_of_name):
             for calendars in data["calendars"]:
                 if value == calendars["dutyDate"]:
@@ -144,6 +150,9 @@ def all_info_of_table(request_os_list: list) -> Table:
                     elif calendars["status"] == "AVAILABLE":
                         # 可约
                         week_of_dict[index] = "[green]可预约"
+
+                        vc = [value, "可预约"]
+                        yuyue_available.append("* " + ' | '.join(vc) + "\n")
                     elif calendars["status"] == "SOLD_OUT":
                         # 约满
                         week_of_dict[index] = "[indian_red]已约满"
@@ -154,12 +163,15 @@ def all_info_of_table(request_os_list: list) -> Table:
                         week_of_dict[index] = "[red]未知状态"
                     break
 
+        hospital_dict["yuyue"] = yuyue_available
+        available.append(hospital_dict)
         table.add_row(data["hosName"], data["firstDeptName"], data["secondDeptName"],
                       week_of_dict[0], week_of_dict[1],
                       week_of_dict[2], week_of_dict[3],
                       week_of_dict[4], week_of_dict[5],
                       week_of_dict[6])
 
+    dingding.send(available)
     return table
 
 
