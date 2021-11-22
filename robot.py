@@ -17,7 +17,7 @@ headers = {
 }
 
 
-def parsing_url(url: str) -> dict:
+def parsing_url(url: str):
     """
     解析所需解析门诊地址，强制要求满足格式
 
@@ -30,7 +30,7 @@ def parsing_url(url: str) -> dict:
 
     url_split = url.split("/")
     if len(url_split) != 8:
-        raise Exception("门诊解析地址无效！请核对。", url)
+        return None
     else:
         md = {}
         headers["Referer"] = url
@@ -40,15 +40,17 @@ def parsing_url(url: str) -> dict:
         second_dept_code = url_split[6]
 
         week_os_info = request_week_os_info(first_dept_code, second_dept_code, hos_code)
-        md.update(week_os_info)
+        if week_os_info is not None:
+            md.update(week_os_info)
 
         os_base_properties = request_os_properties(first_dept_code, second_dept_code, hos_code)
-        md.update(os_base_properties)
+        if os_base_properties is not None:
+            md.update(os_base_properties)
 
         return md
 
 
-def request_week_os_info(first_dept_code: str, second_dept_code: str, hos_code: str) -> dict:
+def request_week_os_info(first_dept_code: str, second_dept_code: str, hos_code: str):
     """
     获取当前一星期的预约状况
 
@@ -66,15 +68,19 @@ def request_week_os_info(first_dept_code: str, second_dept_code: str, hos_code: 
     }
 
     request_url = "https://www.114yygh.com/web/product/list"
-    response = requests.post(request_url, headers=headers, data=json.dumps(body)).json()
+    response_data = requests.post(request_url, headers=headers, data=json.dumps(body))
 
-    if response["resCode"] != 0:
-        raise Exception("获取门诊预约信息异常，请前往检查！", request_url, body, response)
+    response = None
+    if response_data is not None:
+        response = response_data.json()
+
+    if response is None or response["resCode"] != 0:
+        return None
 
     return response["data"]
 
 
-def request_os_properties(first_dept_code: str, second_dept_code: str, hos_code: str) -> dict:
+def request_os_properties(first_dept_code: str, second_dept_code: str, hos_code: str):
     """
     通过请求地址获取门诊信息
 
@@ -87,10 +93,17 @@ def request_os_properties(first_dept_code: str, second_dept_code: str, hos_code:
     format_url = "https://www.114yygh.com/web/department/hos/detail?firstDeptCode={}&secondDeptCode={}&hosCode={}"
 
     request_url = format_url.format(first_dept_code, second_dept_code, hos_code)
-    response = requests.get(request_url, headers=headers).json()
+    response_data = requests.get(request_url, headers=headers)
 
-    if response["resCode"] != 0:
-        raise Exception("获取门诊基础信息异常，请检查！", request_url, response)
+    response = None
+    if response_data is not None:
+        try:
+            response = response_data.json()
+        except Exception:
+            return None
+
+    if response is None or response["resCode"] != 0:
+        return None
 
     return response["data"]
 
@@ -104,8 +117,10 @@ def parsing_url_with_list(urls: list) -> list:
     """
 
     os_parsed_list = []
-    for url in urls:
-        os_parsed_list.append(parsing_url(url))
+    for curl in urls:
+        data = parsing_url(curl)
+        if data is not None:
+            os_parsed_list.append(data)
 
     return os_parsed_list
 
