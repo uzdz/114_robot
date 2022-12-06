@@ -194,8 +194,6 @@ def all_info_of_table(request_os_list: list) -> Table:
                       week_of_dict[4], week_of_dict[5],
                       week_of_dict[6])
 
-    print(available)
-    # 想发那个平台，开启即可，也可以同时开启
     # dingding.send(available)
     feishu.send(available)
     return table
