@@ -3,7 +3,11 @@ from dingtalkchatbot.chatbot import DingtalkChatbot
 
 def create_monitor_flow(content):
     # webhook 通过钉钉群添加机器人可获取
-    webhook = 'xxx'
+    webhook = ''
+
+    if webhook == '':
+        return
+
     xiaoding = DingtalkChatbot(webhook)
     xiaoding.send_markdown(title='数据监控', text=content, is_at_all=True)
 

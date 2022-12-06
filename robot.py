@@ -8,6 +8,7 @@ from rich.live import Live
 import datetime
 from datetime import timedelta
 import dingding
+import feishu
 
 headers = {
     'Content-Type': 'application/json',
@@ -16,6 +17,8 @@ headers = {
                   ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36'
 }
 
+# 排除的日期
+exclude_date = []
 
 def parsing_url(url: str):
     """
@@ -46,6 +49,8 @@ def parsing_url(url: str):
         os_base_properties = request_os_properties(first_dept_code, second_dept_code, hos_code)
         if os_base_properties is not None:
             md.update(os_base_properties)
+
+        md["search_url"] = url
 
         return md
 
@@ -131,7 +136,8 @@ def all_info_of_table(request_os_list: list) -> Table:
     # 最近一周的日期 %Y-%m-%d
     week_of_name = []
     now = datetime.datetime.now()
-    for value in range(1, 8):
+    week_of_name.append(now.strftime("%Y-%m-%d"))
+    for value in range(1, 7):
         next_day = now + timedelta(days=value)
         week_of_name.append(next_day.strftime("%Y-%m-%d"))
 
@@ -167,7 +173,8 @@ def all_info_of_table(request_os_list: list) -> Table:
                         week_of_dict[index] = "[green]可预约"
 
                         vc = [value, "可预约"]
-                        yuyue_available.append("* " + ' | '.join(vc) + "\n")
+                        if value not in exclude_date:
+                            yuyue_available.append(" | " + ' | '.join(vc) + " |\n")
                     elif calendars["status"] == "SOLD_OUT":
                         # 约满
                         week_of_dict[index] = "[indian_red]已约满"
@@ -179,6 +186,7 @@ def all_info_of_table(request_os_list: list) -> Table:
                     break
 
         hospital_dict["yuyue"] = yuyue_available
+        hospital_dict["search_url"] = data["search_url"]
         available.append(hospital_dict)
         table.add_row(data["hosName"], data["firstDeptName"], data["secondDeptName"],
                       week_of_dict[0], week_of_dict[1],
@@ -186,7 +194,10 @@ def all_info_of_table(request_os_list: list) -> Table:
                       week_of_dict[4], week_of_dict[5],
                       week_of_dict[6])
 
-    dingding.send(available)
+    print(available)
+    # 想发那个平台，开启即可，也可以同时开启
+    # dingding.send(available)
+    feishu.send(available)
     return table
 
 
@@ -195,6 +206,9 @@ if __name__ == '__main__':
 
     cookie = console.input(":surfer:[bold deep_sky_blue3] 请输入114北京市预约挂号统一平台授权凭证Cookie：\n")
     headers["Cookie"] = cookie
+
+    exclude = console.input(":surfer:[bold deep_sky_blue3] 请输入排除的日期，多个通过[,]分隔。(2022-12-12,2022-12-13)：\n")
+    exclude_date = exclude.split(",")
 
     os_list = []
 
