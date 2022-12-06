@@ -1,0 +1,17 @@
+brotlipy==0.7.0
+certifi==2021.10.8
+cffi @ file:///opt/concourse/worker/volumes/live/976f8942-f51d-4f0e-7352-2a10f0820d0e/volume/cffi_1625814703974/work
+charset-normalizer @ file:///tmp/build/80754af9/charset-normalizer_1630003229654/work
+colorama==0.4.4
+commonmark==0.9.1
+cryptography @ file:///opt/concourse/worker/volumes/live/fd7fb473-543a-47f4-42b5-800791e25f0f/volume/cryptography_1635366586792/work
+DingtalkChatbot==1.5.3
+idna @ file:///tmp/build/80754af9/idna_1622654382723/work
+pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+Pygments==2.10.0
+pyOpenSSL @ file:///tmp/build/80754af9/pyopenssl_1635333100036/work
+PySocks @ file:///opt/concourse/worker/volumes/live/112288ac-9cb0-4e73-768b-13baf4ca6419/volume/pysocks_1605305820043/work
+requests @ file:///tmp/build/80754af9/requests_1629994808627/work
+rich==10.14.0
+six @ file:///tmp/build/80754af9/six_1623709665295/work
+urllib3==1.26.7
