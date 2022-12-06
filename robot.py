@@ -77,7 +77,10 @@ def request_week_os_info(first_dept_code: str, second_dept_code: str, hos_code: 
 
     response = None
     if response_data is not None:
-        response = response_data.json()
+        try:
+            response = response_data.json()
+        except Exception:
+            return None
 
     if response is None or response["resCode"] != 0:
         return None
