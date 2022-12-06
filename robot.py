@@ -160,9 +160,14 @@ def all_info_of_table(request_os_list: list) -> Table:
         week_of_dict = {0: "[red]未知", 1: "[red]未知", 2: "[red]未知", 3: "[red]未知", 4: "[red]未知", 5: "[red]未知",
                         6: "[red]未知"}
 
-        hospital_dict = {"hosName": data["hosName"],
-                         "firstDeptName": data["firstDeptName"],
-                         "secondDeptName": data["secondDeptName"]}
+        hospital_dict = {"hosName": data.get("hosName", "未知"),
+                         "firstDeptName": data.get("firstDeptName", "未知"),
+                         "secondDeptName": data.get("secondDeptName", "未知")}
+
+        # 核心数据为空则跳过
+        cal_exists = data.get("calendars")
+        if cal_exists is None:
+            continue
 
         yuyue_available = []
         for index, value in enumerate(week_of_name):
@@ -189,9 +194,9 @@ def all_info_of_table(request_os_list: list) -> Table:
                     break
 
         hospital_dict["yuyue"] = yuyue_available
-        hospital_dict["search_url"] = data["search_url"]
+        hospital_dict["search_url"] = data.get("search_url", "未知")
         available.append(hospital_dict)
-        table.add_row(data["hosName"], data["firstDeptName"], data["secondDeptName"],
+        table.add_row(data.get("hosName", "未知"), data.get("firstDeptName", "未知"), data.get("secondDeptName", "未知"),
                       week_of_dict[0], week_of_dict[1],
                       week_of_dict[2], week_of_dict[3],
                       week_of_dict[4], week_of_dict[5],
