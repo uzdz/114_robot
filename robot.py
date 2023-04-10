@@ -73,13 +73,22 @@ def request_week_os_info(first_dept_code: str, second_dept_code: str, hos_code: 
     }
 
     request_url = "https://www.114yygh.com/web/product/list"
-    response_data = requests.post(request_url, headers=headers, data=json.dumps(body))
+
+    response_data = None
+    while True:
+        try:
+            response_data = requests.post(request_url, headers=headers, data=json.dumps(body))
+            break
+        except Exception as e:
+            print(f"request_week_os_info function response_data caught exception: {e}")
+            time.sleep(5)
 
     response = None
     if response_data is not None:
         try:
             response = response_data.json()
-        except Exception:
+        except Exception as e:
+            print(f"request_week_os_info function response caught exception: {e}")
             return None
 
     if response is None or response["resCode"] != 0:
@@ -101,7 +110,15 @@ def request_os_properties(first_dept_code: str, second_dept_code: str, hos_code:
     format_url = "https://www.114yygh.com/web/department/hos/detail?firstDeptCode={}&secondDeptCode={}&hosCode={}"
 
     request_url = format_url.format(first_dept_code, second_dept_code, hos_code)
-    response_data = requests.get(request_url, headers=headers)
+
+    response_data = None
+    while True:
+        try:
+            response_data = requests.get(request_url, headers=headers)
+            break
+        except Exception as e:
+            print(f"request_os_properties function response_data caught exception: {e}")
+            time.sleep(5)
 
     response = None
     if response_data is not None:
