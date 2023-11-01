@@ -53,6 +53,7 @@
 
 * https://hub.docker.com/repository/docker/uzdz/114_robot/general
 * 目前仅支持x86平台架构，也可以自行打包其他平台镜像docker
+* 例如：docker buildx build -t uzdz/114_robot:v1_x86 --platform linux/amd64 --push . 
 
 ![](images/img_1.png)
 

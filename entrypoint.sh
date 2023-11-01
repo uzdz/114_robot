@@ -1,6 +1,6 @@
 #!/bin/sh
 
-/app/robot.py \
+python /app/robot.py \
     --cookie="$BOT_COOKIE" \
     --exclude="$BOT_EXCLUDE_DATE" \
     --urls="$BOT_OS_URLS" \

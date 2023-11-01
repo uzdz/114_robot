@@ -22,6 +22,9 @@ ENV BOT_LARK_WEBHOOK=
 # 添加一个脚本
 COPY ["entrypoint.sh", "/app/entrypoint.sh"]
 RUN chmod +x /app/entrypoint.sh
+RUN chmod +x /app/robot.py
+RUN chmod +x /app/feishu.py
+RUN chmod +x /app/dingding.py
 
 # 使用脚本作为启动命令
 ENTRYPOINT ["/app/entrypoint.sh"]
