@@ -1,0 +1,10 @@
+# syntax=docker/dockerfile:experimental
+
+FROM --platform=linux/amd64 alpine:latest as builder
+
+# 构建过程，可针对不同架构进行适配
+
+FROM --platform=linux/amd64 alpine:latest as final
+
+# 构建过程，可针对不同架构进行适配
+
