@@ -1,6 +1,6 @@
-# 114预约挂号平台实时刷新工具
+# 北京114预约挂号平台实时刷新工具
 
-#### 1. 自主登陆114获取cookie信息
+### 1. 自主登陆114获取cookie信息
 
 * 114网址：https://www.114yygh.com/
 
@@ -8,11 +8,11 @@
 
 ![](images/F9D7620F-E6D6-430C-A419-9700181294CC.png)
 
-找到Application选项卡，然后找到cookie为`cmi-user-ticket`的cookie，将Key和Value通过等于号(=)拼装起来拼。运行程序第一步键入该值！
+找到Application选项卡，然后找到cookie为`cmi-user-ticket`的`cookie`，将`Key`和`Value`通过等于号(`=`)拼装起来拼，用于后续操作赋值。
 
 ![](images/5DB58EC7-A7AB-4471-9604-D6BD8E718806.png)
 
-#### 2. 选择要实时检测的门诊网址
+### 2. 选择要实时检测的门诊网址
 
 选择自己希望查询的门诊科室，然后复制URL即可，例如：
 
@@ -24,25 +24,28 @@
 
 ![](images/6D65B0A1-8980-4AEF-8596-C4AEB7FB87E4.png)
 
-#### 3. 运行py文件
+### 3. 运行py文件
 
-![](images/A110686C-3D4D-4603-8687-C6F476A0AEF8.png)
+目前分为两种运行模式，用于不同场景：
 
-#### 4. 实时查看门诊预约状态（每30秒查询一次）
+* (默认) default：静默
+* rich：Terminal 高亮
+
+#### 3.1 default 静默模式
+
+![](images/3f1da64e-9a5a-47f5-8ae7-217662fefe79.jpeg)
+
+#### 3.2 rich 高亮模式
+
+![](images/68b47553-99af-47e4-a721-905180ce05e4.jpeg)
+
+### 4. 实时门诊预约状态
 
 ![](images/CBB685EF-CAD3-4D94-9EB7-76B0254BB781.png)
 
-#### 5. 飞书通知
+### 5. 渠道通知
 
-钉钉同理。如果同时设置钉钉、飞书webhook地址，即都会发送通知。
-
-```python
-    # webhook 通过飞书群添加机器人可获取
-    webhook = ''
-
-    if webhook == '':
-        return
-```
+通过录入钉钉、飞书webhook地址，程序自动发送有号通知提醒。
 
 ![](images/img.png)
 

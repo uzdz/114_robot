@@ -1,3 +1,5 @@
+import argparse
+
 import requests
 import json
 import time
@@ -19,6 +21,15 @@ headers = {
 
 # 排除的日期
 exclude_date = []
+# 门诊列表
+os_list = []
+# 循环等待时间
+cycle_waiting_time = 30
+# 钉钉webhook
+ding_webhook_url = ""
+# 飞书webhook
+lark_webhook_url = ""
+
 
 def parsing_url(url: str):
     """
@@ -150,8 +161,9 @@ def parsing_url_with_list(urls: list) -> list:
     return os_parsed_list
 
 
-def all_info_of_table(request_os_list: list) -> Table:
-    parsed_data = parsing_url_with_list(request_os_list)
+def all_info_of_table() -> Table:
+    global os_list
+    parsed_data = parsing_url_with_list(os_list)
 
     # 最近一周的日期 %Y-%m-%d
     week_of_name = []
@@ -219,43 +231,108 @@ def all_info_of_table(request_os_list: list) -> Table:
                       week_of_dict[4], week_of_dict[5],
                       week_of_dict[6])
 
-    # dingding.send(available)
-    feishu.send(available)
+    dingding.send(available, ding_webhook_url)
+    feishu.send(available, lark_webhook_url)
     return table
 
 
-if __name__ == '__main__':
+def rich_mode():
+    global exclude_date
+    global os_list
+    global ding_webhook_url
+    global lark_webhook_url
+
     console = Console(color_system='256', style=None)
 
-    cookie = console.input(":surfer:[bold deep_sky_blue3] 请输入114北京市预约挂号统一平台授权凭证Cookie：\n")
-    headers["Cookie"] = cookie
+    # 获取cookie
+    headers["Cookie"] = console.input(":surfer:[bold deep_sky_blue3] 请输入114北京市预约挂号统一平台授权凭证Cookie：\n").strip()
 
-    exclude = console.input(":surfer:[bold deep_sky_blue3] 请输入排除的日期，多个通过[,]分隔。(2022-12-12,2022-12-13)：\n")
-    exclude_date = exclude.split(",")
+    # 获取排除日期
+    exclude_date = console.input(
+        ":surfer:[bold deep_sky_blue3] 请输入排除的日期，多个通过[,]分隔。(2022-12-12,2022-12-13)：\n").strip().split(",")
 
-    os_list = []
-
-    url = console.input(":robot:[bold sky_blue2] 请键入要实时查询的门诊地址：\n")
-    os_list.append(url)
-
+    # 获取门诊地址
+    os_list.append(console.input(":robot:[bold sky_blue2] 请键入要实时查询的门诊地址：\n"))
     while True:
-        access_or_url = console.input(":heavy_exclamation_mark:[bold red1] 键入[Y]进行查询，否则继续批量录入门诊URL：\n")
+        access_or_url = console.input(
+            ":heavy_exclamation_mark:[bold red1] 键入[Y]进行查询，否则继续批量录入门诊URL：\n").strip()
         if access_or_url == "Y":
             break
         else:
             os_list.append(access_or_url)
 
-    os_data = None
-    with console.status("[light_goldenrod3]正在首次加载数据...[/]", spinner="moon"):
-        os_data = all_info_of_table(os_list)
+    ding_webhook_url = console.input(":surfer:[bold deep_sky_blue3] 请输入钉钉webhook地址：\n").strip()
+    lark_webhook_url = console.input(":surfer:[bold deep_sky_blue3] 请输入飞书webhook地址：\n").strip()
 
-    # 首次加载由外部完成，normal为正常加载sleep 5s
+    with console.status("[light_goldenrod3]正在首次加载数据...[/]", spinner="moon"):
+        os_data = all_info_of_table()
+
     normal = False
     with Live(console=console, screen=True, auto_refresh=False) as live:
         while True:
             if normal:
-                time.sleep(30)
-                os_data = all_info_of_table(os_list)
+                time.sleep(cycle_waiting_time)
+                os_data = all_info_of_table()
 
             live.update(os_data, refresh=True)
             normal = True
+
+
+def default_mode(input_args):
+    global exclude_date
+    global os_list
+    global ding_webhook_url
+    global lark_webhook_url
+
+    if input_args.cookie:
+        headers["Cookie"] = input_args.cookie.strip()
+    else:
+        raise Exception("默认模式：请输入(-c)授权凭证Cookie！")
+
+    if input_args.exclude:
+        exclude_date = input_args.exclude.strip().split(",")
+
+    if input_args.urls:
+        os_list = input_args.urls.strip().split(",")
+    else:
+        raise Exception("默认模式：请输入(-u)门诊地址！")
+
+    if input_args.ding:
+        ding_webhook_url = input_args.ding.strip()
+
+    if input_args.lark:
+        lark_webhook_url = input_args.lark.strip()
+
+    while True:
+        all_info_of_table()
+        time.sleep(cycle_waiting_time)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-m", "--mode", help="运行模式[default/静默、rich/高亮]")
+    parser.add_argument("-c", "--cookie", help="114 授权凭证Cookie")
+    parser.add_argument("-e", "--exclude", help="排除的日期，多个通过[,]分隔")
+    parser.add_argument("-u", "--urls", help="门诊地址，多个通过[,]分隔")
+    parser.add_argument("-t", "--time", help="循环等待时间，单位：秒")
+    parser.add_argument("-d", "--ding", help="钉钉webhook地址")
+    parser.add_argument("-l", "--lark", help="飞书webhook地址")
+    args = parser.parse_args()
+
+    # 设置运行模式
+    run_mode = "default"
+    if args.mode:
+        run_mode = args.mode.strip()
+    else:
+        print("未选择运行模式，默认运行模式：default")
+
+    # 设置用户自定义等待时间
+    if args.time and args.time.isdigit():
+        cycle_waiting_time = int(args.time.strip())
+
+    if run_mode == "default":
+        default_mode(args)
+    elif run_mode == "rich":
+        rich_mode()
+    else:
+        raise Exception("运行模式错误，请重新运行！")

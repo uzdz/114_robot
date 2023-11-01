@@ -1,10 +1,8 @@
 from dingtalkchatbot.chatbot import DingtalkChatbot
 
 
-def create_monitor_flow(content):
+def create_monitor_flow(content, webhook):
     # webhook 通过钉钉群添加机器人可获取
-    webhook = ''
-
     if webhook == '':
         return
 
@@ -12,7 +10,7 @@ def create_monitor_flow(content):
     xiaoding.send_markdown(title='数据监控', text=content, is_at_all=True)
 
 
-def send(mark_available=list):
+def send(mark_available=list, webhook=str):
     if mark_available is None:
         return
 
@@ -33,4 +31,4 @@ def send(mark_available=list):
             content = '#### ****[114] 可预约提醒 %s**** \n  *****%s***** - *****%s***** \n' % (hos_name, first_dept_name, second_dept_name)
             content = content + "".join(yuyue)
 
-            create_monitor_flow(content)
+            create_monitor_flow(content, webhook)

@@ -11,6 +11,7 @@ try:
 except AttributeError:
     JSONDecodeError = ValueError
 
+
 def is_not_null_and_blank_str(content):
     """
     非空字符串
@@ -21,6 +22,7 @@ def is_not_null_and_blank_str(content):
         return True
     else:
         return False
+
 
 class FeiShutalkChatbot(object):
     def __init__(self, webhook, secret=None, pc_slide=False, fail_notice=False):
@@ -101,10 +103,8 @@ class FeiShutalkChatbot(object):
                 return result
 
 
-def send(mark_available=list):
+def send(mark_available=list, webhook=str):
     # webhook 通过飞书群添加机器人可获取
-    webhook = ''
-
     if webhook == '':
         return
 

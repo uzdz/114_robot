@@ -1,8 +1,0 @@
-brotlipy==0.7.0
-certifi==2021.10.8
-colorama==0.4.4
-commonmark==0.9.1
-DingtalkChatbot==1.5.3
-Pygments==2.10.0
-rich==10.14.0
-urllib3==1.26.7
