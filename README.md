@@ -1,5 +1,8 @@
 # 北京114预约挂号平台实时刷新工具
 
+<img width="1044" alt="image" src="https://github.com/uzdz/114_robot/assets/28328355/fe004a8e-576c-4dd5-9b7d-ed729c5aa10a">
+
+
 ### 1. 自主登陆114获取cookie信息
 
 * 114网址：https://www.114yygh.com/
